@@ -4,6 +4,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.14.37628.2 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetCare.Web", "PetCare.Web\PetCare.Web.csproj", "{949B4798-7E67-4F92-BBA7-FDE732FBE1C6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E9E24BF8-6523-4CDF-A8D6-28BF78644AA6} = {E9E24BF8-6523-4CDF-A8D6-28BF78644AA6}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetCare.Data", "PetCare.Data\PetCare.Data.csproj", "{EFB4FD22-C14A-44A5-AB97-3B068F1F4650}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetCare.Services", "PetCare.Services\PetCare.Services.csproj", "{E9E24BF8-6523-4CDF-A8D6-28BF78644AA6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EFB4FD22-C14A-44A5-AB97-3B068F1F4650} = {EFB4FD22-C14A-44A5-AB97-3B068F1F4650}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +25,14 @@ Global
 		{949B4798-7E67-4F92-BBA7-FDE732FBE1C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{949B4798-7E67-4F92-BBA7-FDE732FBE1C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{949B4798-7E67-4F92-BBA7-FDE732FBE1C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFB4FD22-C14A-44A5-AB97-3B068F1F4650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFB4FD22-C14A-44A5-AB97-3B068F1F4650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFB4FD22-C14A-44A5-AB97-3B068F1F4650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFB4FD22-C14A-44A5-AB97-3B068F1F4650}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9E24BF8-6523-4CDF-A8D6-28BF78644AA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9E24BF8-6523-4CDF-A8D6-28BF78644AA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9E24BF8-6523-4CDF-A8D6-28BF78644AA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9E24BF8-6523-4CDF-A8D6-28BF78644AA6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
