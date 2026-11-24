@@ -30,5 +30,21 @@ public class PetCareDbContext : DbContext
             .HasOne(record => record.Appointment)
             .WithOne()
             .HasForeignKey<MedicalRecord>(record => record.AppointmentId);
+
+        modelBuilder.Entity<Veterinarian>().HasData(
+            new Veterinarian
+            {
+                Id = 1,
+                FirstName = "Елена",
+                LastName = "Иванова",
+                Specialty = "Вътрешни болести"
+            },
+            new Veterinarian
+            {
+                Id = 2,
+                FirstName = "Николай",
+                LastName = "Петров",
+                Specialty = "Хирургия"
+            });
     }
 }
