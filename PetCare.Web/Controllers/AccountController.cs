@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PetCare.Data;
 using PetCare.Web.Models;
 
 namespace PetCare.Web.Controllers;
@@ -9,13 +10,16 @@ public class AccountController : Controller
 {
     private readonly UserManager<IdentityUser> userManager;
     private readonly SignInManager<IdentityUser> signInManager;
+    private readonly PetCareDbContext dbContext;
 
     public AccountController(
         UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager)
+        SignInManager<IdentityUser> signInManager,
+        PetCareDbContext dbContext)
     {
         this.userManager = userManager;
         this.signInManager = signInManager;
+        this.dbContext = dbContext;
     }
 
     [HttpGet]
@@ -42,15 +46,29 @@ public class AccountController : Controller
             Email = email
         };
 
-        var result = await userManager.CreateAsync(user, model.Password);
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
 
-        if (!result.Succeeded)
+        var createResult = await userManager.CreateAsync(user, model.Password);
+
+        if (!createResult.Succeeded)
         {
             ModelState.AddModelError(string.Empty,
                 "Регистрацията не бе успешна. Проверете имейла и изискванията за паролата.");
 
             return View(model);
         }
+
+        var roleResult = await userManager.AddToRoleAsync(user, "User");
+
+        if (!roleResult.Succeeded)
+        {
+            ModelState.AddModelError(string.Empty,
+                "Не успяхме да завършим регистрацията. Опитайте отново.");
+
+            return View(model);
+        }
+
+        await transaction.CommitAsync();
 
         return RedirectToAction(nameof(Login));
     }
