@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PetCare.Data.Entities;
 
 namespace PetCare.Data;
 
-public class PetCareDbContext : DbContext
+public class PetCareDbContext : IdentityDbContext
 {
     public PetCareDbContext(DbContextOptions<PetCareDbContext> options)
         : base(options)
