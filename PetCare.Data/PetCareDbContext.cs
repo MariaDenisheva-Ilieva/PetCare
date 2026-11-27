@@ -32,6 +32,15 @@ public class PetCareDbContext : IdentityDbContext
             .WithOne()
             .HasForeignKey<MedicalRecord>(record => record.AppointmentId);
 
+        modelBuilder.Entity<Appointment>()
+            .HasIndex(appointment => new
+            {
+                appointment.VeterinarianId,
+                appointment.StartsAt
+            })
+            .IsUnique()
+            .HasFilter("[Status] = 0");
+
         modelBuilder.Entity<Veterinarian>().HasData(
             new Veterinarian
             {

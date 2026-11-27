@@ -1,0 +1,49 @@
+﻿@model PetCare.Web.Models.AppointmentCreateViewModel
+
+@{
+    ViewData["Title"] = "Запази час";
+}
+
+<h1>Запази час</h1>
+<p>Ветеринар: <strong>@Model.VeterinarianName</strong></p>
+
+@if (Model.Pets.Count == 0)
+{
+    <p>За да запазите час, първо добавете домашен любимец.</p>
+    <a asp-controller="Pets" asp-action="Index" class="btn btn-primary">Моите любимци</a>
+}
+else
+{
+    <form asp-controller="Appointments" asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="VeterinarianId" type="hidden" />
+
+        <div class="mb-3">
+            <label asp-for="PetId" class="form-label"></label>
+            <select asp-for="PetId" asp-items="Model.Pets" class="form-select">
+                <option value="">Изберете любимец</option>
+            </select>
+            <span asp-validation-for="PetId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="LocalStart" class="form-label"></label>
+            <input asp-for="LocalStart" type="datetime-local" step="1800" class="form-control" />
+            <div class="form-text">Изберете час на :00 или :30 по българско време.</div>
+            <span asp-validation-for="LocalStart" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Reason" class="form-label"></label>
+            <textarea asp-for="Reason" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Reason" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Запази часа</button>
+        <a asp-controller="Veterinarians" asp-action="Index" class="btn btn-secondary">Назад</a>
+    </form>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

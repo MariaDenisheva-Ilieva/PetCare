@@ -6,6 +6,11 @@
 
 <h1>Ветеринари</h1>
 
+@if (TempData["AppointmentSaved"] is string message)
+{
+    <div class="alert alert-success" role="status">@message</div>
+}
+
 @if (Model.Count == 0)
 {
     <p>Все още няма добавени ветеринари.</p>
@@ -18,6 +23,7 @@ else
                 <tr>
                     <th scope="col">Име и фамилия</th>
                     <th scope="col">Специалност</th>
+                    <th scope="col">Записване</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +32,22 @@ else
                     <tr>
                         <td>@veterinarian.FirstName @veterinarian.LastName</td>
                         <td>@(veterinarian.Specialty ?? "Непосочена")</td>
+                        <td>
+                            @if (User.IsInRole("User"))
+                            {
+                                <a asp-controller="Appointments" asp-action="Create"
+                                   asp-route-veterinarianId="@veterinarian.Id"
+                                   class="btn btn-outline-primary btn-sm">Запази час</a>
+                            }
+                            else if (User.Identity?.IsAuthenticated != true)
+                            {
+                                <a asp-controller="Account" asp-action="Login">Влез, за да запазиш час</a>
+                            }
+                            else
+                            {
+                                <span>Записване от профил на стопанин</span>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>

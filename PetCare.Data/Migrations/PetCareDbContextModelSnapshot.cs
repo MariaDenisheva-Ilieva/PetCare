@@ -248,7 +248,9 @@ namespace PetCare.Data.Migrations
 
                     b.HasIndex("PetId");
 
-                    b.HasIndex("VeterinarianId");
+                    b.HasIndex("VeterinarianId", "StartsAt")
+                        .IsUnique()
+                        .HasFilter("[Status] = 0");
 
                     b.ToTable("Appointments");
                 });
