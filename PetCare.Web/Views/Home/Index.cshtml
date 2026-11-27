@@ -7,7 +7,15 @@
     <p class="lead">
         Записване на часове за преглед и медицинска история за домашни любимци.
     </p>
+
     <a asp-controller="Veterinarians" asp-action="Index" class="btn btn-primary">
         Виж ветеринарите
     </a>
+
+    @if (User.IsInRole("User"))
+    {
+        <a asp-controller="MyAppointments" asp-action="Index" class="btn btn-outline-primary">
+            Моите часове
+        </a>
+    }
 </div>

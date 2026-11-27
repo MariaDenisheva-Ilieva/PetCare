@@ -1,0 +1,83 @@
+﻿@using PetCare.Data.Entities
+@model IReadOnlyList<Appointment>
+
+@{
+    ViewData["Title"] = "Моите часове";
+    var clinicTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Sofia");
+    var now = DateTimeOffset.UtcNow;
+}
+
+<h1>Моите часове</h1>
+
+@if (TempData["AppointmentCancelled"] is string success)
+{
+    <div class="alert alert-success" role="status">@success</div>
+}
+
+@if (TempData["AppointmentCancelError"] is string error)
+{
+    <div class="alert alert-warning" role="alert">@error</div>
+}
+
+<p>
+    <a asp-controller="Veterinarians" asp-action="Index" class="btn btn-primary">
+        Запази нов час
+    </a>
+</p>
+
+@if (Model.Count == 0)
+{
+    <p>Все още нямате записани часове.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Дата и час</th>
+                    <th scope="col">Любимец</th>
+                    <th scope="col">Ветеринар</th>
+                    <th scope="col">Причина</th>
+                    <th scope="col">Статус</th>
+                    <th scope="col">Действие</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var appointment in Model)
+                {
+                    var localStart = TimeZoneInfo.ConvertTime(
+                    appointment.StartsAt, clinicTimeZone);
+                    var statusText = appointment.Status switch
+                    {
+                        AppointmentStatus.Scheduled => "Записан",
+                        AppointmentStatus.Completed => "Проведен",
+                        AppointmentStatus.Cancelled => "Отменен",
+                        _ => "Неизвестен"
+                    };
+
+                    <tr>
+                        <td>@localStart.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@appointment.Pet.Name</td>
+                        <td>@appointment.Veterinarian.FirstName @appointment.Veterinarian.LastName</td>
+                        <td>@appointment.Reason</td>
+                        <td>@statusText</td>
+                        <td>
+                            @if (appointment.Status == AppointmentStatus.Scheduled &&
+                                                appointment.StartsAt > now)
+                            {
+                                <form asp-controller="MyAppointments" asp-action="Cancel"
+                                      method="post">
+                                    <input type="hidden" name="id" value="@appointment.Id" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        Отмени часа
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
