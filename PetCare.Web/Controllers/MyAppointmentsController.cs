@@ -4,12 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetCare.Data;
 using PetCare.Data.Entities;
+using PetCare.Web.Models;
 
 namespace PetCare.Web.Controllers;
 
 [Authorize(Roles = "User")]
 public class MyAppointmentsController : Controller
 {
+    private const int PageSize = 5;
+
     private readonly PetCareDbContext dbContext;
     private readonly UserManager<IdentityUser> userManager;
 
@@ -22,7 +25,9 @@ public class MyAppointmentsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(
+        AppointmentStatus? status,
+        int page = 1)
     {
         var userId = userManager.GetUserId(User);
 
@@ -31,21 +36,48 @@ public class MyAppointmentsController : Controller
             return Challenge();
         }
 
-        var appointments = await dbContext.Appointments
+        if (status.HasValue && !Enum.IsDefined(status.Value))
+        {
+            status = null;
+        }
+
+        var query = dbContext.Appointments
             .AsNoTracking()
-            .Where(appointment => appointment.Pet.Owner.UserId == userId)
+            .Where(appointment => appointment.Pet.Owner.UserId == userId);
+
+        if (status is AppointmentStatus selectedStatus)
+        {
+            query = query.Where(appointment => appointment.Status == selectedStatus);
+        }
+
+        var totalCount = await query.CountAsync();
+        var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)PageSize));
+        page = Math.Clamp(page, 1, totalPages);
+
+        var appointments = await query
             .Include(appointment => appointment.Pet)
             .Include(appointment => appointment.Veterinarian)
             .OrderByDescending(appointment => appointment.StartsAt)
             .ThenByDescending(appointment => appointment.Id)
+            .Skip((page - 1) * PageSize)
+            .Take(PageSize)
             .ToListAsync();
 
-        return View(appointments);
+        return View(new MyAppointmentsViewModel
+        {
+            Appointments = appointments,
+            Status = status,
+            Page = page,
+            TotalPages = totalPages
+        });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Cancel(int id)
+    public async Task<IActionResult> Cancel(
+        int id,
+        AppointmentStatus? status,
+        int page = 1)
     {
         var userId = userManager.GetUserId(User);
 
@@ -75,6 +107,6 @@ public class MyAppointmentsController : Controller
             TempData["AppointmentCancelError"] = "Този час не може да бъде отменен.";
         }
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), new { status, page });
     }
 }

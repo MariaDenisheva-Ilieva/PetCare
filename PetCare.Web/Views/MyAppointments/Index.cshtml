@@ -1,5 +1,5 @@
 ﻿@using PetCare.Data.Entities
-@model IReadOnlyList<Appointment>
+@model PetCare.Web.Models.MyAppointmentsViewModel
 
 @{
     ViewData["Title"] = "Моите часове";
@@ -25,9 +25,22 @@
     </a>
 </p>
 
-@if (Model.Count == 0)
+<form asp-controller="MyAppointments" asp-action="Index" method="get" class="mb-3">
+    <label asp-for="Status" class="form-label">Статус</label>
+    <div class="d-flex flex-wrap gap-2">
+        <select asp-for="Status" class="form-select w-auto">
+            <option value="">Всички</option>
+            <option value="Scheduled">Записани</option>
+            <option value="Completed">Проведени</option>
+            <option value="Cancelled">Отменени</option>
+        </select>
+        <button type="submit" class="btn btn-outline-primary">Филтрирай</button>
+    </div>
+</form>
+
+@if (Model.Appointments.Count == 0)
 {
-    <p>Все още нямате записани часове.</p>
+    <p>Няма часове за избрания статус.</p>
 }
 else
 {
@@ -44,7 +57,7 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var appointment in Model)
+                @foreach (var appointment in Model.Appointments)
                 {
                     var localStart = TimeZoneInfo.ConvertTime(
                     appointment.StartsAt, clinicTimeZone);
@@ -67,7 +80,8 @@ else
                                                 appointment.StartsAt > now)
                             {
                                 <form asp-controller="MyAppointments" asp-action="Cancel"
-                                      method="post">
+                                      asp-route-status="@Model.Status"
+                                      asp-route-page="@Model.Page" method="post">
                                     <input type="hidden" name="id" value="@appointment.Id" />
                                     <button type="submit" class="btn btn-outline-danger btn-sm">
                                         Отмени часа
@@ -80,4 +94,27 @@ else
             </tbody>
         </table>
     </div>
+}
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="d-flex flex-wrap align-items-center gap-2" aria-label="Страници с часове">
+        @if (Model.Page > 1)
+        {
+            <a asp-action="Index" asp-route-status="@Model.Status"
+               asp-route-page="@(Model.Page - 1)" class="btn btn-outline-secondary">
+                Предишна
+            </a>
+        }
+
+        <span>Страница @Model.Page от @Model.TotalPages</span>
+
+        @if (Model.Page < Model.TotalPages)
+        {
+            <a asp-action="Index" asp-route-status="@Model.Status"
+               asp-route-page="@(Model.Page + 1)" class="btn btn-outline-secondary">
+                Следваща
+            </a>
+        }
+    </nav>
 }
