@@ -6,6 +6,11 @@
 
 <h1>Моят профил</h1>
 
+@if (TempData["ProfileRequired"] is string notice)
+{
+    <div class="alert alert-info" role="status">@notice</div>
+}
+
 @if (TempData["ProfileSaved"] is string message)
 {
     <div class="alert alert-success" role="status">@message</div>
@@ -33,6 +38,7 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Запази профила</button>
+    <a asp-controller="Pets" asp-action="Index" class="btn btn-secondary">Моите любимци</a>
 </form>
 
 @section Scripts {

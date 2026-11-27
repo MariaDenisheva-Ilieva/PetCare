@@ -1,0 +1,49 @@
+﻿@model IReadOnlyList<PetCare.Data.Entities.Pet>
+
+@{
+    ViewData["Title"] = "Моите любимци";
+}
+
+<h1>Моите любимци</h1>
+
+@if (TempData["PetSaved"] is string message)
+{
+    <div class="alert alert-success" role="status">@message</div>
+}
+
+<p>
+    <a asp-controller="Pets" asp-action="Create" class="btn btn-primary">
+        Добави любимец
+    </a>
+</p>
+
+@if (Model.Count == 0)
+{
+    <p>Все още нямате добавени любимци.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Име</th>
+                    <th scope="col">Вид</th>
+                    <th scope="col">Порода</th>
+                    <th scope="col">Дата на раждане</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pet in Model)
+                {
+                    <tr>
+                        <td>@pet.Name</td>
+                        <td>@pet.Species</td>
+                        <td>@(pet.Breed ?? "Непосочена")</td>
+                        <td>@(pet.BirthDate?.ToString("dd.MM.yyyy") ?? "Непосочена")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
