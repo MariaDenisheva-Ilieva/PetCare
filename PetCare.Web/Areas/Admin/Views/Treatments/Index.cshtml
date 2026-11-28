@@ -1,0 +1,62 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model PetCare.Web.Models.TreatmentViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Лечения";
+}
+
+<h1>Лечения</h1>
+<p>Домашен любимец: <strong>@Model.PetName</strong></p>
+
+@if (TempData["TreatmentSaved"] is string message)
+{
+    <div class="alert alert-success" role="status">@message</div>
+}
+
+@if (Model.Treatments.Count == 0)
+{
+    <p>Към този медицински запис още няма добавени лечения.</p>
+}
+else
+{
+    <ul class="list-group mb-4">
+        @foreach (var treatment in Model.Treatments)
+        {
+            <li class="list-group-item">
+                <strong>@treatment.Name</strong>
+                @if (!string.IsNullOrWhiteSpace(treatment.Instructions))
+                {
+                    <p class="mb-0">@treatment.Instructions</p>
+                }
+            </li>
+        }
+    </ul>
+}
+
+<h2 class="h4">Добави лечение</h2>
+
+<form asp-area="Admin" asp-controller="Treatments" asp-action="Index" method="post">
+    <input asp-for="AppointmentId" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Instructions" class="form-label"></label>
+        <textarea asp-for="Instructions" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Instructions" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Добави лечение</button>
+    <a asp-area="Admin" asp-controller="MedicalRecords" asp-action="Index"
+       class="btn btn-outline-secondary">Назад към медицинските записи</a>
+</form>
+
+@section Scripts {
+    <partial name="~/Views/Shared/_ValidationScriptsPartial.cshtml" />
+}
