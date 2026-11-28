@@ -9,7 +9,9 @@
 
 <p>Добре дошли в административната зона на PetCare.</p>
 
-<a asp-area="Admin" asp-controller="Visits" asp-action="Index"
-   class="btn btn-primary">
-    Управление на прегледите
-</a>
+<div class="d-flex flex-wrap gap-2">
+    <a asp-area="Admin" asp-controller="Visits" asp-action="Index"
+       class="btn btn-primary">Управление на прегледите</a>
+    <a asp-area="Admin" asp-controller="MedicalRecords" asp-action="Index"
+       class="btn btn-outline-primary">Медицински записи</a>
+</div>

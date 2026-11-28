@@ -1,0 +1,67 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IReadOnlyList<PetCare.Web.Models.MedicalRecordVisitViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Медицински записи";
+    var clinicTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Sofia");
+}
+
+<h1>Медицински записи</h1>
+
+<p>
+    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+       class="btn btn-outline-secondary">Назад към администрацията</a>
+</p>
+
+@if (TempData["RecordMessage"] is string message)
+{
+    <div class="alert alert-info" role="status">@message</div>
+}
+
+@if (Model.Count == 0)
+{
+    <p>Все още няма проведени прегледи.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Дата и час</th>
+                    <th scope="col">Любимец</th>
+                    <th scope="col">Ветеринар</th>
+                    <th scope="col">Медицински запис</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var visit in Model)
+                {
+                    var localStart = TimeZoneInfo.ConvertTime(visit.StartsAt, clinicTimeZone);
+                    <tr>
+                        <td>@localStart.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@visit.PetName</td>
+                        <td>@visit.VeterinarianName</td>
+                        <td>
+                            @if (visit.Diagnosis is null)
+                            {
+                                <a asp-area="Admin" asp-controller="MedicalRecords"
+                                   asp-action="Create" asp-route-appointmentId="@visit.AppointmentId"
+                                   class="btn btn-outline-primary btn-sm">Добави запис</a>
+                            }
+                            else
+                            {
+                                <div><strong>Диагноза</strong> — @visit.Diagnosis</div>
+                                @if (!string.IsNullOrWhiteSpace(visit.Notes))
+                                {
+                                    <div><strong>Бележки</strong> — @visit.Notes</div>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
