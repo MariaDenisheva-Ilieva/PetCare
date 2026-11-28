@@ -18,4 +18,12 @@
             Моите часове
         </a>
     }
+
+    @if (User.IsInRole("Administrator"))
+    {
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+           class="btn btn-outline-primary">
+            Администрация
+        </a>
+    }
 </div>

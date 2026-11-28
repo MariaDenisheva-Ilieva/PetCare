@@ -19,6 +19,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 })
     .AddEntityFrameworkStores<PetCareDbContext>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/AccessDenied";
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -56,6 +62,17 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+app.MapGet("/AccessDenied", () =>
+    Results.Text(
+        "Нямате достъп до тази страница.",
+        contentType: "text/plain; charset=utf-8",
+        statusCode: StatusCodes.Status403Forbidden));
+
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}")
+    .WithStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
