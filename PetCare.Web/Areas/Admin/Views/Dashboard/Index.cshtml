@@ -1,4 +1,6 @@
-﻿@{
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Администрация";
 }
@@ -6,3 +8,8 @@
 <h1>Администрация</h1>
 
 <p>Добре дошли в административната зона на PetCare.</p>
+
+<a asp-area="Admin" asp-controller="Visits" asp-action="Index"
+   class="btn btn-primary">
+    Управление на прегледите
+</a>
